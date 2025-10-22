@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wayback Machine - 存档历史</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #2c5fa8;
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #2c5fa8;
+        }
+
+        nav {
+            display: flex;
+            gap: 25px;
+            margin-left: auto;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 1;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #2c5fa8 0%, #4a7fc1 100%);
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .page-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .searched-url {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-top: 10px;
+            padding: 15px 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            display: inline-block;
+            word-break: break-all;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .archive-info {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .archive-info h2 {
+            color: #2c5fa8;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .archive-info p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .archive-count {
+            display: inline-block;
+            background-color: #e3f2fd;
+            color: #2c5fa8;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .timeline-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .timeline-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .timeline-header h2 {
+            color: #2c5fa8;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .timeline-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .archive-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .archive-table thead {
+            background-color: #2c5fa8;
+            color: white;
+        }
+
+        .archive-table th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .archive-table tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.2s;
+        }
+
+        .archive-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .archive-table td {
+            padding: 20px;
+            color: #333;
+        }
+
+        .year-badge {
+            display: inline-block;
+            background-color: #e3f2fd;
+            color: #2c5fa8;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .date-cell {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-available {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #2c5fa8;
+            text-decoration: none;
+            font-size: 15px;
+            margin-bottom: 20px;
+            transition: gap 0.3s;
+        }
+
+        .back-link:hover {
+            gap: 12px;
+        }
+
+        .back-link::before {
+            content: '←';
+            font-size: 18px;
+        }
+
+        .start-browsing-container {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .start-browsing-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 30px;
+            background-color: #2c5fa8;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .start-browsing-link:hover {
+            background-color: #1e4a8a;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        footer {
+            background-color: #2c5fa8;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 60px;
+        }
+
+        footer p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .archive-table {
+                font-size: 14px;
+            }
+
+            .archive-table th,
+            .archive-table td {
+                padding: 12px 10px;
+            }
+
+            .timeline-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="#" class="logo">
+                <div class="logo-icon">🌐</div>
+                Wayback Machine
+            </a>
+            <nav>
+                <a href="#">Web</a>
+                <a href="#">Images</a>
+                <a href="#">Videos</a>
+                <a href="#">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <div class="page-header-content">
+            <h1>互联网时光机存档</h1>
+            <div class="searched-url">
+                http://www.mygarden.net
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <a href="#" class="back-link">返回搜索</a>
+
+        <div class="archive-info">
+            <h2>找到 8 个历史快照</h2>
+            <p>以下是我们为该网站保存的所有历史版本。请查看下方的存档列表，选择您想要浏览的时间点。</p>
+            <span class="archive-count">共 8 个存档</span>
+        </div>
+
+        <div class="timeline-container">
+            <div class="timeline-header">
+                <h2>历史存档时间线</h2>
+                <p>按时间倒序排列</p>
+            </div>
+
+            <table class="archive-table">
+                <thead>
+                    <tr>
+                        <th>年份</th>
+                        <th>存档日期</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="year-badge">2023</span></td>
+                        <td class="date-cell">2023年10月1日</td>
+                        <td><span class="status-badge status-available">可用</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="year-badge">2015</span></td>
+                        <td class="date-cell">2015年7月15日</td>
+                        <td><span class="status-badge status-available">可用</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="year-badge">2014</span></td>
+                        <td class="date-cell">2014年2月21日</td>
+                        <td><span class="status-badge status-available">可用</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="year-badge">2013</span></td>
+                        <td class="date-cell">2013年9月10日</td>
+                        <td><span class="status-badge status-available">可用</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="year-badge">2012</span></td>
+                        <td class="date-cell">2012年4月5日</td>
+                        <td><span class="status-badge status-available">可用</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="year-badge">2011</span></td>
+                        <td class="date-cell">2011年6月13日</td>
+                        <td><span class="status-badge status-available">可用</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="year-badge">2010</span></td>
+                        <td class="date-cell">2010年1月1日</td>
+                        <td><span class="status-badge status-available">可用</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="year-badge">2009</span></td>
+                        <td class="date-cell">2009年3月2日</td>
+                        <td><span class="status-badge status-available">可用</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="start-browsing-container">
+                <a href="YOUR_START_BROWSING_LINK_HERE" class="start-browsing-link">开始浏览存档</a>
+                <!-- 请将 YOUR_START_BROWSING_LINK_HERE 替换为您希望跳转的实际链接 -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Wayback Machine. 仅供学习演示使用。</p>
+    </footer>
+</body>
+</html>
